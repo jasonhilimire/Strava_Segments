@@ -16,4 +16,15 @@ r = requests.get(URL + segment_id, params=params)
 r.raise_for_status()
 segment_data = r.json()
 formatted = json.dumps(segment_data, indent=4, sort_keys=True)
-print(formatted)
+# print(formatted)
+name = segment_data['name']
+kom = segment_data['xoms']['overall']
+
+athlete_PR_min = (segment_data['athlete_segment_stats']['pr_elapsed_time']) // 60
+athlete_PR_sec = (segment_data['athlete_segment_stats']['pr_elapsed_time']) % 60
+
+print(f"{name} - KOM: {kom} - PR {athlete_PR_min}:{athlete_PR_sec}")
+
+
+#TODO: if prompt = starred - print 20 starred segments, by NAME, ID, KOM
+# TODO - split overall time and multiply first by 60 to get seconds + seconds - then divid by PR to get % behind
