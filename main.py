@@ -19,8 +19,6 @@ def get_starred():
     r = requests.get(STARRED_URL, params=params)
     r.raise_for_status()
     starred_data = r.json()
-    #formatted = json.dumps(starred_data, indent=4, sort_keys=True)
-    # print(formatted)
     for data in starred_data:
         kom = data["athlete_pr_effort"]["is_kom"]
         pr_time = data["pr_time"]
@@ -28,15 +26,20 @@ def get_starred():
         seg_id = data['id']
         if kom:
             KOM = "👑"
+            behind_perc = "👌"
         else:
             KOM = get_segment_kom(str(seg_id))
-        print(f"--{seg_id} - {data['name']} -- KOM = {KOM} - PR = {pr_string} --")
+            behind = get_percent_behind_kom(time_string(KOM), pr_time)
+            behind_perc = "{:.2%}".format(behind)
+
+        print(f"-- {seg_id} - {data['name']} -- KOM = {KOM} - PR = {pr_string} BEHIND:{behind_perc }--")
 
 
 def user_prompt():
     prompt = 'Enter Any Segment ID > '
     segment_id = input(prompt).lower()
-    return  segment_id
+    return segment_id
+
 
 def get_segment_kom(segment_id: int):
     r = requests.get(URL + segment_id, params=params)
@@ -44,12 +47,14 @@ def get_segment_kom(segment_id: int):
     segment_data = r.json()
     return segment_data['xoms']['overall']
 
+
 def get_segment_data():
     segment_id = user_prompt()
     r = requests.get(URL + segment_id, params=params)
     r.raise_for_status()
     segment_data = r.json()
     return segment_data
+
 
 def get_data(segment_data: dict):
     name = segment_data['name']
@@ -60,12 +65,22 @@ def get_data(segment_data: dict):
     return kom
 
 
+def time_string(time_kom: str):
+    if "s" not in time_kom:
+        date_time = datetime.datetime.strptime(time_kom, "%M:%S")
+        a_timedelta = date_time - datetime.datetime(1900, 1, 1)
+        return a_timedelta.total_seconds()
+    else:
+        seconds_only = int(time_kom.strip('s'))
+        return seconds_only
+
+
+def get_percent_behind_kom(kom_time: int, pr_time: int):
+    n = kom_time/ pr_time
+    x = 1 - n
+    return x
+
 
 get_starred()
 get_data(get_segment_data())
 
-
-# TODO - split overall time and multiply first by 60 to get seconds + seconds - then divide by PR to get % behind
-#TODO abstract into classes
-#TODO: TRY STATEMENTS
-#TODO SHOW KOM TIME FOR STARRED SEGMENTS
