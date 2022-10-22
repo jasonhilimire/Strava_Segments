@@ -27,12 +27,21 @@ def get_starred():
         if kom:
             KOM = "👑"
             behind_perc = "👌"
+            target_segment = ""
         else:
             KOM = get_segment_kom(str(seg_id))
             behind = get_percent_behind_kom(time_string(KOM), pr_time)
             behind_perc = "{:.2%}".format(behind)
+            if behind < .05:
+                target_segment = ">>> TARGET <<<"
+            else:
+                target_segment = "- work to do! -"
 
-        print(f"-- {seg_id} - {data['name']} -- KOM = {KOM} - PR = {pr_string} BEHIND:{behind_perc }--")
+
+
+
+
+        print(f"{seg_id} - {data['name']} -- KOM = {KOM} - PR = {pr_string} BEHIND: {behind_perc}  {target_segment}")
 
 
 def user_prompt():
