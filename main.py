@@ -19,6 +19,7 @@ def get_starred():
     r = requests.get(STARRED_URL, params=params)
     r.raise_for_status()
     starred_data = r.json()
+    print(starred_data)
     for data in starred_data:
         kom = data["athlete_pr_effort"]["is_kom"]
         pr_time = data["pr_time"]
@@ -33,9 +34,9 @@ def get_starred():
             behind = get_percent_behind_kom(time_string(KOM), pr_time)
             behind_perc = "{:.2%}".format(behind)
             if behind < .05:
-                target_segment = ">>> TARGET <<<"
+                target_segment = "🎯🎯🎯 TARGET 🎯🎯🎯"
             else:
-                target_segment = "- work to do! -"
+                target_segment = "👷🏻 work to do! "
 
 
 
