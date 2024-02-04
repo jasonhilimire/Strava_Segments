@@ -19,8 +19,10 @@ def get_starred():
     r = requests.get(STARRED_URL, params=params)
     r.raise_for_status()
     starred_data = r.json()
-    print(starred_data)
-    for data in starred_data:
+    # print(starred_data)
+    sorted_data = sorted(starred_data, key=lambda data: (data["athlete_pr_effort"]["is_kom"], get_percent_behind_kom(
+        time_string(get_segment_kom(str(data['id']))), data["pr_time"])))
+    for data in sorted_data:
         kom = data["athlete_pr_effort"]["is_kom"]
         pr_time = data["pr_time"]
         pr_string = str(datetime.timedelta(seconds=pr_time))
@@ -29,6 +31,8 @@ def get_starred():
             KOM = "👑"
             behind_perc = "👌"
             target_segment = ""
+            print(
+                f"{seg_id} - {data['name']} -- KOM = {KOM} - PR = {pr_string}")
         else:
             KOM = get_segment_kom(str(seg_id))
             behind = get_percent_behind_kom(time_string(KOM), pr_time)
@@ -36,13 +40,12 @@ def get_starred():
             if behind < .05:
                 target_segment = "🎯🎯🎯 TARGET 🎯🎯🎯"
             else:
-                target_segment = "👷🏻 work to do! "
+                target_segment = "👷🏻👷🏻 work to do! 👷🏻👷🏻"
+            print(
+                f"{seg_id} - {data['name']} -- KOM = {KOM} - PR = {pr_string} BEHIND: {behind_perc}  {target_segment}")
 
 
 
-
-
-        print(f"{seg_id} - {data['name']} -- KOM = {KOM} - PR = {pr_string} BEHIND: {behind_perc}  {target_segment}")
 
 
 def user_prompt():
